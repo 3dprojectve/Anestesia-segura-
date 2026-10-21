@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Cotizador Anestesia Segura</title>
+  <meta name="description" content="Cotizador del Dr. Julio Barroso, Médico Anestesiólogo" />
+  <meta name="theme-color" content="#1B1F7A" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="img/icon-192.png" />
+  <link rel="apple-touch-icon" href="img/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Anestesia Segura" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <img src="img/logo.png" alt="Dr. Julio Barroso - Médico Anestesiólogo" class="header-logo" />
+    <div>
+      <h1>Cotizador Anestesia Segura</h1>
+      <p>Dr. Julio Barroso · Médico Anestesiólogo</p>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="cotizador">Cotizador</button>
+    <button class="tab" data-view="registros">Registros <span id="reg-count" class="badge">0</span></button>
+  </nav>
+
+  <main>
+    <!-- ============ COTIZADOR ============ -->
+    <section id="view-cotizador" class="view active">
+      <form id="form" autocomplete="off" novalidate>
+
+        <div class="modo" role="tablist">
+          <button type="button" class="modo-btn active" data-modo="peptidos">Péptidos GLP-1</button>
+          <button type="button" class="modo-btn" data-modo="servicios">Servicios de anestesia</button>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">1</span> Datos</h2>
+          <label>Nombre del cliente *
+            <input id="cliente" required placeholder="Quien solicita / paga" />
+          </label>
+          <label class="check-inline">
+            <input type="checkbox" id="mismo" /> El paciente es el mismo cliente
+          </label>
+          <label>Nombre del paciente *
+            <input id="paciente" required placeholder="Nombre y apellido" />
+          </label>
+          <div class="grid2">
+            <label>Cédula
+              <input id="cedula" inputmode="numeric" placeholder="V-00.000.000" />
+            </label>
+            <label>Teléfono
+              <input id="telefono" inputmode="tel" placeholder="0414-0000000" />
+            </label>
+          </div>
+          <div class="grid2">
+            <label>Edad
+              <input id="edad" type="number" min="0" max="120" inputmode="numeric" />
+            </label>
+            <label>Sexo
+              <select id="sexo">
+                <option value="">—</option>
+                <option>Femenino</option>
+                <option>Masculino</option>
+              </select>
+            </label>
+          </div>
+          <label class="check-inline hidden solo-peptidos" id="fertil-wrap">
+            <input type="checkbox" id="fertil" /> Paciente en edad fértil (agrega prueba de embarazo)
+          </label>
+          <div class="solo-servicios">
+            <label>Procedimiento / cirugía
+              <input id="procedimiento" placeholder="Ej: Colecistectomía laparoscópica" />
+            </label>
+            <div class="grid2">
+              <label>Cirujano
+                <input id="cirujano" placeholder="Dr(a)." />
+              </label>
+              <label>Clínica
+                <input id="clinica" />
+              </label>
+            </div>
+            <label>Fecha estimada de la cirugía
+              <input id="fecha-cx" type="date" />
+            </label>
+          </div>
+        </div>
+
+        <div class="card solo-servicios">
+          <h2><span class="num">2</span> Servicios</h2>
+          <p class="hint">Marca los servicios y escribe el precio que quieres que salga en el PDF.</p>
+          <div id="servicios" class="servicios"></div>
+          <div class="add-serv">
+            <input id="nuevo-serv" placeholder="Otro servicio…" />
+            <input id="nuevo-serv-precio" type="number" min="0" step="0.01" inputmode="decimal" placeholder="$" />
+            <button type="button" id="agregar-serv" class="btn-sm">+</button>
+          </div>
+        </div>
+
+        <div class="card solo-peptidos">
+          <h2><span class="num">2</span> Medicamento y plan</h2>
+          <label>Medicamento (análogos GLP-1 aprobados)
+            <select id="medicamento"></select>
+          </label>
+          <div id="planes" class="planes"></div>
+          <div class="grid2">
+            <label>Cantidad
+              <input id="cantidad" type="number" min="1" value="1" inputmode="numeric" />
+            </label>
+            <label>Precio unitario (USD)
+              <input id="precio" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Escribe el precio" />
+            </label>
+          </div>
+          <label class="check-inline" id="modificar-wrap">
+            <input type="checkbox" id="modificar-precio" /> Modificar precio
+          </label>
+          <p id="precio-aviso" class="aviso hidden">Escribe el precio que quieres que salga en el PDF.</p>
+        </div>
+
+        <div class="card solo-peptidos">
+          <h2><span class="num">3</span> Exámenes de protocolo</h2>
+          <p class="hint">Exámenes a realizar como protocolo para administración de Análogos de GLP-1 para pérdida de peso.</p>
+          <div class="row-actions">
+            <button type="button" class="link" id="marcar-todos">Marcar todos</button>
+            <button type="button" class="link" id="desmarcar-todos">Desmarcar todos</button>
+          </div>
+          <div id="examenes" class="checklist"></div>
+          <div class="add-row">
+            <input id="nuevo-examen" placeholder="Agregar otro examen…" />
+            <button type="button" id="agregar-examen" class="btn-sm">+</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">4</span> Método de pago</h2>
+          <div id="pagos" class="checklist"></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">5</span> Observaciones</h2>
+          <textarea id="notas" rows="2" placeholder="Opcional"></textarea>
+        </div>
+
+        <details class="card">
+          <summary><span class="num">6</span> Términos y condiciones <small>(se incluyen en el PDF)</small></summary>
+          <ol id="terminos-lista" class="terminos"></ol>
+        </details>
+
+        <div class="total-bar">
+          <div>
+            <small>Total</small>
+            <strong id="total">$0.00</strong>
+          </div>
+          <div class="actions">
+            <button type="button" id="btn-compartir" class="btn ghost">Compartir</button>
+            <button type="submit" class="btn">Descargar PDF</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ REGISTROS ============ -->
+    <section id="view-registros" class="view">
+      <div class="card">
+        <h2>Registros de cotizaciones</h2>
+        <p class="hint">Se guardan en este teléfono. Más adelante se pueden conectar a Firebase.</p>
+        <input id="buscar" placeholder="Buscar por paciente o cliente…" />
+      </div>
+      <div id="lista-registros"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="js/logo-data.js"></script>
+  <script src="js/fonts-data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "cotizador-anestesia-segura",
+  "version": "1.0.0",
+  "description": "Cotizador Anestesia Segura - Dr. Julio Barroso",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
